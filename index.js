@@ -27,6 +27,11 @@ let persons = [
       "number": "39-23-6423122"
     }
 ]
+//Función generador de id
+const generarId = () => {
+    const numberRandon = Math.random()*1000
+    return Math.floor(numberRandon)
+}
 //se crea la ruta para obtener todos los datos
 app.get('/api/persons', (request, response) => {
     response.json(persons)
@@ -58,6 +63,26 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(element => element.id !== id)
     response.status(202).end()
+})
+//se crea una ruta para crear una persona en el phonebook
+app.post(('/api/persons'), (request, response) => {
+    const body = request.body
+    if(!body.name || !body.number){
+        response.status(400).json({error: 'name or number is missing'})
+        return
+    }
+    const personsVerifi = persons.find(element => element.name === body.name)
+    if(personsVerifi){
+        response.status(400).json({error: 'name must be unique'})
+        return
+    }
+    const person = {
+        id: generarId(),
+        name: body.name,
+        number: body.number
+    }
+    persons = persons.concat(person)
+    response.status(200).json(person)
 })
 //se pone el servidor a escuchar las peticiones por un puerto dado
 const PORT = 3001
