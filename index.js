@@ -31,6 +31,28 @@ const persons = [
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
+//se crea la ruta de información, donde se muestra cuantas personas hay y la hora de la solicitud
+app.get('/info', (request, response) => {
+    const numeroDePersonas = persons.length
+    let hora = new Date()
+    response.send(`
+    <div>
+        <h2>Phonebook has info for ${numeroDePersonas} people</h2>
+        <div>
+            ${hora}
+        </div>
+    </div>`)
+})
+//se crea ruta para obtener a una sola persona
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const person = persons.find(element => element.id === id)
+    if(person){
+        response.status(200).json(person)
+        return
+    }
+    response.status(404).send()
+})
 //se pone el servidor a escuchar las peticiones por un puerto dado
 const PORT = 3001
 app.listen(PORT, () => {
