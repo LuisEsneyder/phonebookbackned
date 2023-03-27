@@ -5,7 +5,7 @@ const app = express()
 //se utiliza el metodo para leer los datos en formato json 
 app.use(express.json())
 //datos
-const persons = [
+let persons = [
     { 
       "id": 1,
       "name": "Arto Hellas", 
@@ -51,7 +51,13 @@ app.get('/api/persons/:id', (request, response) => {
         response.status(200).json(person)
         return
     }
-    response.status(404).send()
+    response.status(404).end()
+})
+//se crea ruta para eliminar a una persona
+app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    persons = persons.filter(element => element.id !== id)
+    response.status(202).end()
 })
 //se pone el servidor a escuchar las peticiones por un puerto dado
 const PORT = 3001
