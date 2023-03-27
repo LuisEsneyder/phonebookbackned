@@ -31,7 +31,6 @@ const persons = [
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
-
 //se pone el servidor a escuchar las peticiones por un puerto dado
 const PORT = 3001
 app.listen(PORT, () => {
