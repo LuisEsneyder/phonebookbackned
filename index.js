@@ -1,9 +1,15 @@
 //se llama la libreria para crear el servidor
 const express = require('express')
+const morgan = require('morgan')
 //se hace una instancia de la libreria en app
 const app = express()
-//se utiliza el metodo para leer los datos en formato json 
-app.use(express.json())
+//se llama morgan que sirve como middlewere para ver lo que traen las recuest
+morgan.token('datos', function getDatos(req){
+    return JSON.stringify(req.body)
+})
+//se agregan los middlewere al app
+app.use(express.json())//se utiliza el metodo para leer los datos en formato json 
+app.use(morgan(':method :url :status :res[content-length] :response-time ms :datos'))
 //datos
 let persons = [
     { 
