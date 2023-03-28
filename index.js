@@ -91,7 +91,7 @@ app.post(('/api/persons'), (request, response) => {
     response.status(200).json(person)
 })
 //se pone el servidor a escuchar las peticiones por un puerto dado
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
