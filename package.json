@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../phone-frontend-vite/ && npm run build && cp -r dist ../phonebook",
-    "deploy:full": "npm run build:ui && git add . && git add . && git commit -m uibuild &&  git push origin master "
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild &&  git push origin master "
   },
   "author": "Luis Fernández",
   "license": "ISC",
