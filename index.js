@@ -9,7 +9,7 @@ morgan.token('datos', function getDatos(req){
     return JSON.stringify(req.body)
 })
 //se agregan los middlewere al app
-app.use(express.static('build'))
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())//se utiliza el metodo para leer los datos en formato json 
 app.use(morgan(':method :url :status :res[content-length] :response-time ms :datos'))
