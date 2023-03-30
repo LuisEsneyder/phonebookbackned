@@ -1,5 +1,7 @@
 //se llama la libreria para crear el servidor
+require('dotenv').config()
 const express = require('express')
+const Person = require('./models/persons')
 const morgan = require('morgan')
 const cors = require('cors')
 //se hace una instancia de la libreria en app
@@ -43,7 +45,9 @@ const generarId = () => {
 }
 //se crea la ruta para obtener todos los datos
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(result => {
+        response.json(result)
+    })
 })
 //se crea la ruta de información, donde se muestra cuantas personas hay y la hora de la solicitud
 app.get('/info', (request, response) => {
