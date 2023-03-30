@@ -89,13 +89,13 @@ app.post(('/api/persons'), (request, response) => {
         response.status(400).json({error: 'name must be unique'})
         return
     }
-    const person = {
-        id: generarId(),
+    const person = new Person({
         name: body.name,
         number: body.number
-    }
-    persons = persons.concat(person)
-    response.status(200).json(person)
+    }) 
+    person.save().then(savedPerson => {
+        response.status(200).json(savedPerson)
+    })
 })
 //se pone el servidor a escuchar las peticiones por un puerto dado
 const PORT = process.env.PORT || 3001
