@@ -7,10 +7,12 @@ const cors = require('cors')
 //se hace una instancia de la libreria en app
 const app = express()
 //se llama morgan que sirve como middlewere para ver lo que traen las recuest
+
 morgan.token('datos', function getDatos(req){
     return JSON.stringify(req.body)
 })
 //se crea el middlewere para el controlador de error
+
 const errorHandle = (error, request, response, next) => {
     console.error(error.message);
     if(error.name === 'CastError'){
@@ -18,6 +20,7 @@ const errorHandle = (error, request, response, next) => {
     }
     next(error)
 }
+
 //se agregan los middlewere al app
 app.use(express.static('dist'))
 app.use(cors())
@@ -33,7 +36,7 @@ app.get('/api/persons', (request, response) => {
     })
 })
 //se crea la ruta de información, donde se muestra cuantas personas hay y la hora de la solicitud
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
     const numeroDePersonas = persons.length
     let hora = new Date()
     response.send(`
@@ -46,13 +49,9 @@ app.get('/info', (request, response) => {
 })
 //se crea ruta para obtener a una sola persona
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(element => element.id === id)
-    if(person){
-        response.status(200).json(person)
-        return
-    }
-    response.status(404).end()
+    Person.findById(request.params.id).then(result=>{
+        response.status(200).json(result)
+    }).catch(error => next(error))
 })
 //se crea ruta para eliminar a una persona
 app.delete('/api/persons/:id', (request, response, next) => {
