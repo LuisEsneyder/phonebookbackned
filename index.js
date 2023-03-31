@@ -61,24 +61,47 @@ app.delete('/api/persons/:id', (request, response, next) => {
     }).catch(error => next(error))
 })
 //se crea una ruta para crear una persona en el phonebook
-app.post(('/api/persons'), (request, response) => {
+app.post(('/api/persons'), (request, response, next) => {
     const body = request.body
     if(!body.name || !body.number){
         response.status(400).json({error: 'name or number is missing'})
         return
     }
-    const personsVerifi = persons.find(element => element.name === body.name)
-    if(personsVerifi){
-        response.status(400).json({error: 'name must be unique'})
+    Person.findOne({name: body.name}).then(result =>{
+        if(result){
+            const updatePersons = {
+                name: body.name,
+                number: body.number
+            }
+            Person.findOneAndUpdate({name: body.name}, updatePersons, {new: true}).then(personUp => {
+                response.status(200).json(personUp)
+            }).catch(error => next(error) )
+            return
+        }
+        const person = new Person({
+            name: body.name,
+            number: body.number
+        }) 
+        person.save().then(savedPerson => {
+            response.status(200).json(savedPerson)
+        })
+    }).catch(error => next(error))
+    
+})
+//se crea ruta para actualizar un elemento
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+    if(!body.name || !body.number){
+        response.status(400).json({error: 'name or number is missing'})
         return
     }
-    const person = new Person({
+    const updatePersons = {
         name: body.name,
         number: body.number
-    }) 
-    person.save().then(savedPerson => {
-        response.status(200).json(savedPerson)
-    })
+    }
+    Person.findByIdAndUpdate(request.params.id, updatePersons, {new: true}).then(result => {
+        response.json(result)
+    }).catch(error => next(error))
 })
 //se usa el middlewere de error
 app.use(errorHandle)
