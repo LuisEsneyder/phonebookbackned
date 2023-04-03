@@ -2,14 +2,15 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Luis Esneyder",
-    "number": "3-101010"
+    "name":"Arto vihavainen",
+    "number":"sadasdsa"
 }
+
 ###
-PUT  http://localhost:3001/api/persons/6427341cca1f85f27251fc79
+PUT  http://localhost:3001/api/persons/64273cdaa17596f90fd9ead8
 Content-Type: application/json
 
 {
-    "name": "tarcila",
-    "number": "3-101010"
+    "name":"asdas",
+    "number":"sadasdsa"
 }

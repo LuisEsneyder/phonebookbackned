@@ -18,6 +18,9 @@ const errorHandle = (error, request, response, next) => {
     if(error.name === 'CastError'){
         return response.status(400).send({error: 'malformatted id'})
     }
+    if(error.name === 'ValidationError'){
+        return response.status(400).json({error: error.message})
+    }
     next(error)
 }
 
@@ -61,44 +64,38 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 //se crea una ruta para crear una persona en el phonebook
 app.post(('/api/persons'), (request, response, next) => {
-    const body = request.body
-    if(!body.name || !body.number){
-        response.status(400).json({error: 'name or number is missing'})
-        return
-    }
-    Person.findOne({name: body.name}).then(result =>{
-        if(result){
+    const {name, number} = request.body
+    Person.findOne({name: name}).then(result =>{
+        if(result !== null){
             const updatePersons = {
-                name: body.name,
-                number: body.number
+                name,
+                number
             }
-            Person.findOneAndUpdate({name: body.name}, updatePersons, {new: true}).then(personUp => {
+            Person.findOneAndUpdate({name}, updatePersons, {new: true, runValidators: true, context: 'query'}).then(personUp => {
                 response.status(200).json(personUp)
-            }).catch(error => next(error) )
-            return
+            }).catch(error=>next(error))
+
+        } else {
+            const person = new Person({
+                name,
+                number
+            }) 
+            person.save().then(savedPerson => {
+                response.status(200).json(savedPerson)
+            }).catch(error=>next(error))
         }
-        const person = new Person({
-            name: body.name,
-            number: body.number
-        }) 
-        person.save().then(savedPerson => {
-            response.status(200).json(savedPerson)
-        })
+        
     }).catch(error => next(error))
     
 })
 //se crea ruta para actualizar un elemento
 app.put('/api/persons/:id', (request, response, next) => {
-    const body = request.body
-    if(!body.name || !body.number){
-        response.status(400).json({error: 'name or number is missing'})
-        return
-    }
+    const {name, number} = request.body
     const updatePersons = {
-        name: body.name,
-        number: body.number
+        name,
+        number
     }
-    Person.findByIdAndUpdate(request.params.id, updatePersons, {new: true}).then(result => {
+    Person.findByIdAndUpdate(request.params.id, updatePersons, {new: true, runValidators: true, context:'query'}).then(result => {
         response.json(result)
     }).catch(error => next(error))
 })
